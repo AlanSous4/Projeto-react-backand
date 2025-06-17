@@ -22,9 +22,9 @@ app.post("/usuarios", async (req, res) => {
 });
 
 app.get("/usuarios", async (req, res) => {
-  let users = [];
+  let users;
 
-  if (req.query) {
+  if (req.query.name || req.query.email || req.query.age) {
     users = await prisma.user.findMany({
       where: {
         name: req.query.name,
@@ -33,7 +33,7 @@ app.get("/usuarios", async (req, res) => {
       },
     });
   } else {
-    const users = await prisma.user.findMany();
+    users = await prisma.user.findMany(); // <<< Aqui ajusta para usar a mesma variável
   }
 
   res.status(200).json(users);
@@ -64,9 +64,11 @@ app.delete("/usuarios/:id", async (req, res) => {
   res.status(200).json({ message: "Usuário deletado com sucesso!" });
 });
 
-app.listen(3000, () => {
-  console.log("Servidor rodando na porta 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
+
 
 /*HTTP status
     2xx -> Sucesso
